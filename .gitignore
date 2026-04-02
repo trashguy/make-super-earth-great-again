@@ -1,0 +1,49 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# API keys
+.env
+
+# Generated output (rebuild with scripts)
+output/wav/
+output/wem/
+output/originals/
+output/originals_wav/
+output/mod/
+output/dist/
+output/bughole_variants/
+output/manifest.json
+
+# Keep these mappings (slow to regenerate)
+!output/originals_transcriptions.json
+!output/wem_mapping.json
+
+# Wwise cache
+wwise_cache/
+
+# Tools (downloaded at setup)
+tools/hd2-audio-modder/
+tools/vgmstream/
+tools/filediver-cli/
+tools/wwiser-launcher/
+
+# Claude Code (keep skills only)
+.claude/*
+!.claude/skills/
+
+# IDE
+.idea/
+
+# Logs
+log.txt*
+
+# Build state
+.last_build_id

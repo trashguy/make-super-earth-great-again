@@ -1,0 +1,14 @@
+[project]
+name = "trumpdivers2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "lz4>=4.4.5",
+    "numpy>=2.4.4",
+    "openai-whisper>=20250625",
+    "ormsgpack>=1.12.2",
+    "pydub>=0.25.1",
+]

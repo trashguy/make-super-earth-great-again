@@ -33,7 +33,7 @@ DIST_DIR = Path("output/dist")
 
 MOD_NAME = "TrumpDivers Voice Pack"
 MOD_GUID = "d0ca1d47-7247-4f0b-b33a-736172756d70"  # deterministic GUID
-MOD_VERSION = "1.0.0"
+MOD_VERSION = "1.1.0"
 MOD_DESCRIPTION = "Replaces Helldiver Voice 4 (Default Male 4) with Trump voice lines. 336 unique Trumpified voice lines mapped to all 785 in-game callouts by category."
 
 

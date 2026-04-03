@@ -15,7 +15,7 @@ set -euo pipefail
 PROJECT_DIR="$(dirname "$(realpath "$0")")"
 cd "$PROJECT_DIR"
 
-MOD_VERSION="1.0.0"
+MOD_VERSION="1.1.0"
 STEAM_APPS="$HOME/.local/share/Steam/steamapps"
 MANIFEST="$STEAM_APPS/appmanifest_553850.acf"
 GAME_DIR="$STEAM_APPS/common/Helldivers 2"

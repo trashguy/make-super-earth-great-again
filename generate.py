@@ -46,11 +46,11 @@ OUTPUT_DIR = Path("output/wav")
 # Map our emotion tags to Fish Audio format hints
 EMOTION_MAP = {
     "normal": "",
-    "confident": "(confidently) ",
-    "excited": "(excitedly) ",
-    "angry": "(angrily) ",
-    "urgent": "(urgently) ",
-    "shouting": "(shouting) ",
+    "confident": "(boldly and confidently) ",
+    "excited": "(excitedly, with high energy) ",
+    "angry": "(angrily, with real frustration) ",
+    "urgent": "(urgently, with intensity) ",
+    "shouting": "(shouting loudly) ",
     "whispering": "(whispering) ",
 }
 
@@ -139,8 +139,9 @@ def main():
     parser.add_argument("--only", "-o", nargs="+", type=int, help="Only generate specific line indices")
     parser.add_argument("--dry-run", "-n", action="store_true", help="Preview without generating")
     parser.add_argument("--model-id", "-m", default=DEFAULT_MODEL_ID, help="Fish Audio model ID")
-    parser.add_argument("--delay", "-d", type=float, default=0.25, help="Delay between API calls (seconds)")
+    parser.add_argument("--delay", "-d", type=float, default=0.1, help="Delay between API calls (seconds)")
     parser.add_argument("--resume", "-r", action="store_true", help="Skip lines that already have output files")
+    parser.add_argument("--workers", "-w", type=int, default=5, help="Concurrent API workers (default 5)")
     args = parser.parse_args()
 
     api_key = get_api_key() if not args.dry_run else "dry-run"
@@ -179,57 +180,65 @@ def main():
         print(f"Total: {len(lines)} lines")
         return
 
-    # Generate
+    # Generate with concurrent workers
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    import threading
+
     success = 0
     failed = 0
     skipped = 0
+    lock = threading.Lock()
 
-    client = httpx.Client()
-    try:
-        for idx, (i, line) in enumerate(lines):
-            filename = make_filename(i, line)
-            output_path = OUTPUT_DIR / filename
-
-            if args.resume and output_path.exists():
-                print(f"  [{i:3d}] SKIP (exists) {filename}")
-                manifest.append({
-                    "index": i,
-                    "category": line.category,
-                    "original": line.original,
-                    "trump": line.trump,
-                    "emotion": line.emotion,
-                    "filename": filename,
-                })
+    # Filter out already-done lines if resuming
+    todo = []
+    for i, line in lines:
+        filename = make_filename(i, line)
+        output_path = OUTPUT_DIR / filename
+        if args.resume and output_path.exists():
+            with lock:
                 skipped += 1
-                continue
+                manifest.append({
+                    "index": i, "category": line.category,
+                    "original": line.original, "trump": line.trump,
+                    "emotion": line.emotion, "filename": filename,
+                })
+            continue
+        todo.append((i, line, filename, output_path))
 
-            emotion_prefix = EMOTION_MAP.get(line.emotion, "")
-            print(f"  [{i:3d}/{len(VOICE_LINES)-1}] {line.category:12s} | {emotion_prefix}{line.trump[:60]}...")
+    if skipped:
+        print(f"Skipped {skipped} existing files")
 
+    print(f"Generating {len(todo)} lines with {args.workers} workers...")
+
+    def worker(item):
+        i, line, filename, output_path = item
+        client = httpx.Client()
+        try:
             ok = generate_line(client, api_key, args.model_id, line.trump, output_path, line.emotion)
+            return (i, line, filename, output_path, ok)
+        finally:
+            client.close()
 
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        futures = {pool.submit(worker, item): item for item in todo}
+        done_count = 0
+        for future in as_completed(futures):
+            i, line, filename, output_path, ok = future.result()
+            done_count += 1
             if ok:
                 size_kb = output_path.stat().st_size / 1024
-                print(f"         -> {filename} ({size_kb:.1f} KB)")
-                success += 1
-                manifest.append({
-                    "index": i,
-                    "category": line.category,
-                    "original": line.original,
-                    "trump": line.trump,
-                    "emotion": line.emotion,
-                    "filename": filename,
-                })
+                print(f"  [{done_count}/{len(todo)}] {filename} ({size_kb:.1f} KB)")
+                with lock:
+                    success += 1
+                    manifest.append({
+                        "index": i, "category": line.category,
+                        "original": line.original, "trump": line.trump,
+                        "emotion": line.emotion, "filename": filename,
+                    })
             else:
-                print(f"         FAILED: {filename}")
-                failed += 1
-
-            # Rate limit politeness
-            if idx < len(lines) - 1:
-                time.sleep(args.delay)
-
-    finally:
-        client.close()
+                print(f"  [{done_count}/{len(todo)}] FAILED: {filename}")
+                with lock:
+                    failed += 1
 
     # Save manifest
     manifest_path = OUTPUT_DIR / "manifest.json"

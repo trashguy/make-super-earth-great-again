@@ -30,15 +30,20 @@ REAL_CLIP_MAP = {
     "10_its_on_fire.wav": None,  # extra clip
     "11_ready.wav": None,  # extra clip
     "13_god_bless.wav": None,  # extra clip
-    "14_yeah.wav": "283_response_Affirmative.wav",  # "Yeah!" for affirmative
+    # "14_yeah.wav": "283_response_Affirmative.wav",  # too much crowd noise
 }
 
 
+SAMPLE_RATE = 48000
+CHANNELS = 1
+
+
 def apply_tempo(input_path: Path, output_path: Path, tempo: float = 1.18):
-    """Speed up audio without pitch change."""
+    """Speed up audio without pitch change, output 48kHz mono."""
     result = subprocess.run(
         ["ffmpeg", "-y", "-i", str(input_path),
          "-af", f"atempo={tempo}",
+         "-ar", str(SAMPLE_RATE), "-ac", str(CHANNELS),
          "-c:a", "pcm_s16le",
          str(output_path)],
         capture_output=True, text=True
@@ -46,12 +51,11 @@ def apply_tempo(input_path: Path, output_path: Path, tempo: float = 1.18):
     return result.returncode == 0
 
 
-def normalize_volume(input_path: Path, output_path: Path):
-    """Simple peak normalization — no time stretching."""
+def convert_to_48k_mono(input_path: Path, output_path: Path):
+    """Convert to 48kHz mono without any other processing."""
     subprocess.run(
         ["ffmpeg", "-y", "-i", str(input_path),
-         "-af", "volume=0dB:replaygain=drop,aformat=sample_rates=48000",
-         "-filter:a", "dynaudnorm=p=0.9:s=5",
+         "-ar", str(SAMPLE_RATE), "-ac", str(CHANNELS),
          "-c:a", "pcm_s16le",
          str(output_path)],
         capture_output=True
@@ -79,15 +83,13 @@ def main():
         out_path = PROCESSED_DIR / wav.name
 
         if wav.name in real_replacements:
-            # Use real Trump clip as-is — just copy, no processing
+            # Real Trump clip — just convert to 48kHz mono, no tempo/volume changes
             print(f"  [REAL] {wav.name}")
-            shutil.copy2(real_replacements[wav.name], out_path)
+            convert_to_48k_mono(real_replacements[wav.name], out_path)
             replaced += 1
         else:
-            # AI clip — apply tempo then simple volume normalization
-            temp_path = temp_dir / wav.name
-            apply_tempo(wav, temp_path, 1.18)
-            normalize_volume(temp_path, out_path)
+            # AI clip — apply tempo and convert to 48kHz mono
+            apply_tempo(wav, out_path, 1.18)
             processed += 1
 
         if (processed + replaced) % 50 == 0:

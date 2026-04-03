@@ -107,7 +107,7 @@ VOICE_LINES: list[VoiceLine] = [
     # =========================================================================
     VoiceLine("enemy", "Contact!", "Contact! Bad guys!", "shouting"),
     VoiceLine("enemy", "Enemy spotted!", "Enemy spotted! Big enemy!", "shouting"),
-    VoiceLine("enemy", "Enemies spotted!", "Enemies! Not sending their best!", "shouting"),
+    VoiceLine("enemy", "Enemies spotted!", "Enemies! They're not sending their best!", "shouting"),
     VoiceLine("enemy", "Engaging!", "Engaging! Going in!", "shouting"),
     VoiceLine("enemy", "Not engaging.", "Not engaging. Strategic.", "confident"),
     VoiceLine("enemy", "Enemy patrol!", "Enemy patrol! Bad hombres!", "urgent"),
@@ -206,7 +206,7 @@ VOICE_LINES: list[VoiceLine] = [
     VoiceLine("injury", "I'm losing so much blood!", "Losing blood! Tremendous blood!", "angry"),
     VoiceLine("injury", "More blood loss than manual recommends.", "More blood than doctors recommend.", "urgent"),
     VoiceLine("injury", "Ouch!", "Ow!", "angry"),
-    VoiceLine("injury", "AHHH!", "AHHH!", "shouting"),
+    VoiceLine("injury", "AHHH!", "OUCH! My arm!", "shouting"),
 
     # Arms
     VoiceLine("injury", "Sweet Liberty, my arm!", "My arm! This is terrible!", "angry"),

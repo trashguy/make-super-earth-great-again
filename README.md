@@ -8,6 +8,8 @@ A Helldivers 2 voice mod that replaces **Helldiver Voice 4** (Default Male 4) wi
 
 Reload? "Hold on, I'm reloading, okay?" Grenade? "You're fired!" Bughole? "Nasty! Very nasty!"
 
+https://github.com/trashguy/make-super-earth-great-again/raw/master/showcase/Make-Super-Earth-Great-Again-Showcase.mp3
+
 **Client-side only** — other players will not hear your modded voice lines.
 
 ## Install

@@ -51,7 +51,7 @@ CATEGORY_KEYWORDS = {
     "response": ["affirmative", "negative", "cancel", "nevermind", "yes", "no", "thank", "sorry", "nice", "done", "take it", "don't need"],
     "extraction": ["extraction", "shuttle", "get in"],
     "jumppack": ["jump pack", "skies", "liberty leap"],
-    "terminal": ["terminal", "equipment"],
+    "terminal": ["terminal", "equipment", "we've got"],
     "weather": ["visibility", "obscure", "target"],
     "patriotic": ["fight for", "soldier", "democracy", "liberty", "prosperity", "super earth", "way of life", "protect", "win", "tie", "play", "good one"],
 }

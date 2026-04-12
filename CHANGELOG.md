@@ -1,6 +1,15 @@
 # Changelog
 
-## v1.1.0 (unreleased)
+## v1.1.1 (2026-04-12)
+
+### Fixed
+- Fixed "Bots!" callout saying "Bugs!" — Whisper mistranscribed "Bots" as "But"/"buts"
+- Added missing "Bots!" voice line ("Clankers! Deport them all!")
+- Fixed friendly sentries announced as "Contact! Bad guys!" — Whisper mistranscribed "Sentry" as "Century"
+- Fixed "Hellbomb" pronounced as "HL Bomb" — all-caps was confusing TTS
+- Fixed friendly equipment on ground saying "Objective equipment" instead of "Equipment! Great equipment!"
+
+## v1.1.0
 
 ### Changed
 - Trimmed all voice lines to match in-game pacing — average words per line cut from ~8 to 4.2

@@ -128,6 +128,7 @@ VOICE_LINES: list[VoiceLine] = [
     VoiceLine("enemy", "Illuminate teleporting in!", "Teleporting! That's cheating!", "angry"),
     VoiceLine("enemy", "Squid outpost spotted!", "Squid outpost! Taking it down!", "urgent"),
     VoiceLine("enemy", "Squid warp gate!", "Warp gate! Big ugly gate!", "urgent"),
+    VoiceLine("enemy", "Bots!", "Clankers! Deport them all!", "angry"),
     VoiceLine("enemy", "Bot fabricator!", "Bot factory! Not on my watch!", "angry"),
     VoiceLine("enemy", "Dangerous wildlife.", "Dangerous. Very dangerous.", "confident"),
     VoiceLine("enemy", "Harmless animal.", "Harmless. Very cute.", "confident"),
@@ -187,7 +188,7 @@ VOICE_LINES: list[VoiceLine] = [
     VoiceLine("stratagem", "Objective equipment.", "Objective equipment. Very important.", "confident"),
 
     # Hellbomb / SOS / Flare
-    VoiceLine("stratagem", "Calling in a hellbomb!", "HELLBOMB! You're gonna love it!", "excited"),
+    VoiceLine("stratagem", "Calling in a hellbomb!", "Hell bomb! You're gonna love it!", "excited"),
     VoiceLine("stratagem", "Hellbomb armed -- clear the area!", "Hellbomb armed! Get out! Gonna be huge!", "shouting"),
     VoiceLine("stratagem", "Hellbomb.", "Hellbomb. Very powerful.", "confident"),
     VoiceLine("stratagem", "Deploying SOS beacon.", "SOS. We need help.", "urgent"),

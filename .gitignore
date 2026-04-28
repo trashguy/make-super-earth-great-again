@@ -21,6 +21,13 @@ output/mod/
 output/dist/
 output/bughole_variants/
 output/manifest.json
+output/candidate_clips/
+output/gist/
+output/showcase/
+output/source_clips/
+output/voice_samples/
+output/wav_processed/
+output/voice4_all.json
 
 # Keep these mappings (slow to regenerate)
 !output/originals_transcriptions.json
@@ -38,6 +45,9 @@ tools/wwiser-launcher/
 # Claude Code (keep skills only)
 .claude/*
 !.claude/skills/
+
+# Serena MCP (local tool config & cache)
+.serena/
 
 # IDE
 .idea/

@@ -57,6 +57,16 @@ CATEGORY_KEYWORDS = {
 }
 
 
+# Faction signals — only used to disambiguate inside the "enemy" category so a
+# bug callout can't fall through to a squid Trump line. "but " is included
+# because Whisper systematically mishears "Bug" as "But" on these clips.
+FACTION_KEYWORDS = {
+    "bug": ["bug", "but ", "hive", "bughole", "hole", "tunnel", "terminid", "charger", "bile", "shrieker", "stalker", "brood"],
+    "squid": ["squid", "illuminate", "voteless", "harvester", "watcher", "warp", "obelisk"],
+    "bot": ["bot", "automaton", "fabricator", "hulk", "devastator", "gunship", "dropship", "factory strider", "clanker"],
+}
+
+
 def detect_category(text: str) -> str | None:
     """Detect voice line category from transcribed text using keywords."""
     text_lower = text.lower()
@@ -73,11 +83,24 @@ def detect_category(text: str) -> str | None:
     return None
 
 
+def detect_faction(text: str) -> str | None:
+    """Detect enemy faction (bug/squid/bot) from text. None if ambiguous."""
+    text_lower = text.lower()
+    scores: dict[str, int] = {}
+    for faction, keywords in FACTION_KEYWORDS.items():
+        score = sum(len(kw) for kw in keywords if kw in text_lower)
+        if score > 0:
+            scores[faction] = score
+    return max(scores, key=scores.get) if scores else None
+
+
 def find_best_trump_match(original_text: str, category: str | None) -> tuple[int, float]:
     """Find the best matching Trump voice line index.
     Returns (index into VOICE_LINES, similarity score)."""
     best_idx = 0
     best_score = 0.0
+
+    original_faction = detect_faction(original_text) if category == "enemy" else None
 
     for i, line in enumerate(VOICE_LINES):
         # Similarity to the original text
@@ -86,6 +109,15 @@ def find_best_trump_match(original_text: str, category: str | None) -> tuple[int
         # Bonus for matching category
         if category and line.category == category:
             score += 0.3
+
+        # Within enemy callouts, prefer same faction and penalize cross-faction
+        # so e.g. "Bug outpost" can't get mapped to "Squid outpost".
+        if category == "enemy" and original_faction:
+            line_faction = detect_faction(line.original)
+            if line_faction == original_faction:
+                score += 0.5
+            elif line_faction is not None:
+                score -= 0.5
 
         if score > best_score:
             best_score = score
@@ -123,6 +155,10 @@ def main():
             category = "combat"
         else:
             category = detect_category(text)
+            # If a faction signal is present (bug/squid/bot) but no category matched,
+            # this is an enemy callout — Whisper just garbled the structural words.
+            if category is None and detect_faction(text) is not None:
+                category = "enemy"
 
         trump_idx, score = find_best_trump_match(text, category)
         trump_filename = make_trump_filename(trump_idx)

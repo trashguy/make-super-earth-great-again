@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.1.2 (2026-04-30)
+
+### Fixed
+- Fixed "Bug outpost spotted!" callouts saying "Squid outpost!" — Whisper mistranscribed "Bug" as "But", and the matcher had no faction awareness inside the `enemy` category
+- Matcher now detects faction (bug/squid/bot) and prefers same-faction Trump lines, with a cross-faction penalty so a bug callout cannot fall through to a squid line (or vice versa)
+
+### Changed
+- Rebuilt against Helldivers 2 build 22947868 — picks up 1 new voice line added in the patch
+
 ## v1.1.1 (2026-04-12)
 
 ### Fixed
